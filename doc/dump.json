@@ -1,0 +1,1504 @@
+[
+  {
+    "__docId__": 0,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "lib/crashReporter.js",
+    "memberof": null,
+    "longname": "lib/crashReporter.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "/**\r\n * Sends crash reports as state is updated and listeners are notified.\r\n */\r\nconst crashReporter = store => next => action => {\r\n  try {\r\n    return next(action)\r\n  } catch (err) {\r\n    console.error('Caught an exception!', err)\r\n    /*\r\n    Raven.captureException(err, {\r\n      extra: {\r\n        action,\r\n        state: store.getState()\r\n      }\r\n    })\r\n    throw err\r\n    */\r\n  }\r\n}\r\n\r\nexport default crashReporter\r\n"
+  },
+  {
+    "__docId__": 1,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "crashReporter",
+    "memberof": "lib/crashReporter.js",
+    "longname": "lib/crashReporter.js~crashReporter",
+    "access": null,
+    "export": true,
+    "importPath": "redux-middleware/lib/crashReporter.js",
+    "importStyle": "crashReporter",
+    "description": "Sends crash reports as state is updated and listeners are notified.",
+    "lineNumber": 4,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 2,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "lib/idleMiddleware.js",
+    "memberof": null,
+    "longname": "lib/idleMiddleware.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "/** When context has already been created, it can be shared to middleware component. */\r\n\r\nexport const createIdleMiddleware = (context = {}) => {\r\n  //const createDispatcher = configureDispatcher(context)\r\n  const isIdleAction = ({ meta }) => meta && meta.idle\r\n\r\n  return store => next => action => {\r\n    if(!isIdleAction(action))\r\n      return next(action)\r\n\r\n    const { idle } = action.meta\r\n    const { dispatch, getState } = store\r\n    //const dispatcher = createDispatcher(dispatch, getState)\r\n    if(!actionNames.includes(action.type))\r\n      return next(action)\r\n    return next(action)\r\n  }\r\n}\r\n\r\n\r\nexport default createIdleMiddleware()\r\n"
+  },
+  {
+    "__docId__": 3,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "createIdleMiddleware",
+    "memberof": "lib/idleMiddleware.js",
+    "longname": "lib/idleMiddleware.js~createIdleMiddleware",
+    "access": null,
+    "export": true,
+    "importPath": "redux-middleware/lib/idleMiddleware.js",
+    "importStyle": "{createIdleMiddleware}",
+    "description": "When context has already been created, it can be shared to middleware component.",
+    "lineNumber": 3,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 4,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "lib/index.js",
+    "memberof": null,
+    "longname": "lib/index.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import { applyMiddleware } from 'redux'\r\n\r\n//import metaRouter from './metaRouter'\r\nimport timeoutScheduler from './timeoutScheduler'\r\nimport thunk from './thunk'\r\nimport readyStatePromise from './readyStatePromise'\r\nimport createLogger from './logger'\r\nimport crashReporter from './crashReporter'\r\n\r\n\r\n/** Default array of useful redux middleware */\r\nexport default function middleware() {\r\n  const logger = createLogger()\r\n  return  [ timeoutScheduler\r\n          , thunk\r\n          , readyStatePromise\r\n          , logger\r\n          , crashReporter\r\n          ]\r\n}\r\n\r\nexport const applyLogicalMiddleware = () => applyMiddleware(...middleware())\r\n"
+  },
+  {
+    "__docId__": 5,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "middleware",
+    "memberof": "lib/index.js",
+    "longname": "lib/index.js~middleware",
+    "access": null,
+    "export": true,
+    "importPath": "redux-middleware",
+    "importStyle": "middleware",
+    "description": "Default array of useful redux middleware",
+    "lineNumber": 12,
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 6,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "applyLogicalMiddleware",
+    "memberof": "lib/index.js",
+    "longname": "lib/index.js~applyLogicalMiddleware",
+    "access": null,
+    "export": true,
+    "importPath": "redux-middleware",
+    "importStyle": "{applyLogicalMiddleware}",
+    "description": null,
+    "lineNumber": 22,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 7,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "lib/logger.js",
+    "memberof": null,
+    "longname": "lib/logger.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "/** redux-logger with different defaults. */\r\n\r\nconst repeat = (str, times) => (new Array(times + 1)).join(str)\r\nconst pad = (num, maxLength) => repeat('0', maxLength - num.toString().length) + num\r\nconst formatTime = (time) => `@ ${pad(time.getHours(), 2)}:${pad(time.getMinutes(), 2)}:${pad(time.getSeconds(), 2)}.${pad(time.getMilliseconds(), 3)}`\r\n\r\n// Use the new performance api to get better precision if available\r\nconst timer = typeof performance !== 'undefined' && typeof performance.now === 'function' ? performance : Date\r\n\r\n\r\n/**\r\n * parse the level option of createLogger\r\n *\r\n * @property {string | function | object} level - console[level]\r\n * @property {object} action\r\n * @property {array} payload\r\n * @property {string} type\r\n */\r\n\r\nfunction getLogLevel(level, action, payload, type) {\r\n  switch (typeof level) {\r\n  case 'object':\r\n    return typeof level[type] === 'function' ? level[type](...payload) : level[type]\r\n  case 'function':\r\n    return level(action)\r\n  default:\r\n    return level\r\n  }\r\n}\r\n\r\n/**\r\n * Creates logger with followed options\r\n *\r\n * @namespace\r\n * @property {object} options - options for logger\r\n * @property {string | function | object} options.level - console[level]\r\n * @property {boolean} options.duration - print duration of each action?\r\n * @property {boolean} options.timestamp - print timestamp with each action?\r\n * @property {object} options.colors - custom colors\r\n * @property {object} options.logger - implementation of the `console` API\r\n * @property {boolean} options.logErrors - should errors in action execution be caught, logged, and re-thrown?\r\n * @property {boolean} options.collapsed - is group collapsed?\r\n * @property {boolean} options.predicate - condition which resolves logger behavior\r\n * @property {function} options.stateTransformer - transform state before print\r\n * @property {function} options.actionTransformer - transform action before print\r\n * @property {function} options.errorTransformer - transform error before print\r\n */\r\n\r\nexport default function createLogger(options = {}) {\r\n  const {\r\n    level = 'log',\r\n    logger = console,\r\n    logErrors = true,\r\n    collapsed = true,\r\n    predicate,\r\n    duration = false,\r\n    timestamp = true,\r\n    transformer, // deprecated\r\n    stateTransformer = state => state,\r\n    actionTransformer = actn => actn,\r\n    errorTransformer = error => error,\r\n    colors = {\r\n      title: () => '#000000',\r\n      prevState: () => '#9E9E9E',\r\n      action: () => '#03A9F4',\r\n      nextState: () => '#4CAF50',\r\n      error: () => '#F20404'\r\n    }\r\n  } = options\r\n\r\n  // exit if console undefined\r\n  if (typeof logger === 'undefined') {\r\n    return () => next => action => next(action)\r\n  }\r\n\r\n  if (transformer) {\r\n    console.error('Option \\'transformer\\' is deprecated, use stateTransformer instead')\r\n  }\r\n\r\n  const logBuffer = []\r\n  function printBuffer() {\r\n    logBuffer.forEach((logEntry, key) => {\r\n      const { started, startedTime, action, prevState, error } = logEntry\r\n      let { took, nextState } = logEntry\r\n      const nextEntry = logBuffer[key + 1]\r\n      if (nextEntry) {\r\n        nextState = nextEntry.prevState\r\n        took = nextEntry.started - started\r\n      }\r\n      // message\r\n      const formattedAction = actionTransformer(action)\r\n      const isCollapsed = (typeof collapsed === 'function') ? collapsed(() => nextState, action) : collapsed\r\n\r\n      const formattedTime = formatTime(startedTime)\r\n      const titleCSS = colors.title ? `color: ${colors.title(formattedAction)};` : null\r\n      const title = `action ${timestamp ? formattedTime : ''} ${formattedAction.type} ${duration ? `(in ${took.toFixed(2)} ms)` : ''}`\r\n\r\n      // render\r\n      try {\r\n        if (isCollapsed) {\r\n          if (colors.title) logger.groupCollapsed(`%c ${title}`, titleCSS)\r\n          else logger.groupCollapsed(title)\r\n        } else {\r\n          if (colors.title) logger.group(`%c ${title}`, titleCSS)\r\n          else logger.group(title)\r\n        }\r\n      } catch (e) {\r\n        logger.log(title)\r\n      }\r\n\r\n      const prevStateLevel = getLogLevel(level, formattedAction, [prevState], 'prevState')\r\n      const actionLevel = getLogLevel(level, formattedAction, [formattedAction], 'action')\r\n      const errorLevel = getLogLevel(level, formattedAction, [error, prevState], 'error')\r\n      const nextStateLevel = getLogLevel(level, formattedAction, [nextState], 'nextState')\r\n\r\n      if (prevStateLevel) {\r\n        if (colors.prevState) logger[prevStateLevel]('%c prev state', `color: ${colors.prevState(prevState)}; font-weight: bold`, prevState)\r\n        else logger[prevStateLevel]('prev state', prevState)\r\n      }\r\n\r\n      if (actionLevel) {\r\n        if (colors.action) logger[actionLevel]('%c action', `color: ${colors.action(formattedAction)}; font-weight: bold`, formattedAction)\r\n        else logger[actionLevel]('action', formattedAction)\r\n      }\r\n\r\n      if (error && errorLevel) {\r\n        if (colors.error) logger[errorLevel]('%c error', `color: ${colors.error(error, prevState)}; font-weight: bold`, error)\r\n        else logger[errorLevel]('error', error)\r\n      }\r\n\r\n      if (nextStateLevel) {\r\n        if (colors.nextState) logger[nextStateLevel]('%c next state', `color: ${colors.nextState(nextState)}; font-weight: bold`, nextState)\r\n        else logger[nextStateLevel]('next state', nextState)\r\n      }\r\n\r\n      try {\r\n        logger.groupEnd()\r\n      } catch (e) {\r\n        logger.log('—— log end ——')\r\n      }\r\n    })\r\n    logBuffer.length = 0\r\n  }\r\n\r\n  return ({ getState }) => (next) => (action) => {\r\n    // exit early if predicate function returns false\r\n    if (typeof predicate === 'function' && !predicate(getState, action))\r\n      return next(action)\r\n\r\n    const logEntry = {}\r\n    logBuffer.push(logEntry)\r\n\r\n    logEntry.started = timer.now()\r\n    logEntry.startedTime = new Date()\r\n    logEntry.prevState = stateTransformer(getState())\r\n    logEntry.action = action\r\n\r\n    let returnedValue\r\n    if (logErrors) {\r\n      try {\r\n        returnedValue = next(action)\r\n      } catch (e) {\r\n        logEntry.error = errorTransformer(e)\r\n      }\r\n    } else\r\n      returnedValue = next(action)\r\n\r\n    logEntry.took = timer.now() - logEntry.started\r\n    logEntry.nextState = stateTransformer(getState())\r\n\r\n    printBuffer()\r\n\r\n    if (logEntry.error) throw logEntry.error\r\n    return returnedValue\r\n  }\r\n}\r\n\r\n"
+  },
+  {
+    "__docId__": 8,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "repeat",
+    "memberof": "lib/logger.js",
+    "longname": "lib/logger.js~repeat",
+    "access": null,
+    "export": false,
+    "importPath": "redux-middleware/lib/logger.js",
+    "importStyle": null,
+    "description": "redux-logger with different defaults.",
+    "lineNumber": 3,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 9,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "pad",
+    "memberof": "lib/logger.js",
+    "longname": "lib/logger.js~pad",
+    "access": null,
+    "export": false,
+    "importPath": "redux-middleware/lib/logger.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 10,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "formatTime",
+    "memberof": "lib/logger.js",
+    "longname": "lib/logger.js~formatTime",
+    "access": null,
+    "export": false,
+    "importPath": "redux-middleware/lib/logger.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 11,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "timer",
+    "memberof": "lib/logger.js",
+    "longname": "lib/logger.js~timer",
+    "access": null,
+    "export": false,
+    "importPath": "redux-middleware/lib/logger.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 8,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 12,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "getLogLevel",
+    "memberof": "lib/logger.js",
+    "longname": "lib/logger.js~getLogLevel",
+    "access": null,
+    "export": false,
+    "importPath": "redux-middleware/lib/logger.js",
+    "importStyle": null,
+    "description": "parse the level option of createLogger",
+    "lineNumber": 20,
+    "params": [
+      {
+        "name": "level",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "action",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "payload",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "type",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "string ",
+          " function ",
+          " object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "level",
+        "description": "console[level]"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "action",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "array"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "payload",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "type",
+        "description": ""
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 13,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "createLogger",
+    "memberof": "lib/logger.js",
+    "longname": "lib/logger.js~createLogger",
+    "access": null,
+    "export": true,
+    "importPath": "redux-middleware/lib/logger.js",
+    "importStyle": "createLogger",
+    "description": "Creates logger with followed options",
+    "lineNumber": 49,
+    "unknown": [
+      {
+        "tagName": "@namespace",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "options",
+        "optional": true,
+        "types": [
+          "{}"
+        ],
+        "defaultRaw": {},
+        "defaultValue": "{}"
+      }
+    ],
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options",
+        "description": "options for logger"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string ",
+          " function ",
+          " object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options.level",
+        "description": "console[level]"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "boolean"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options.duration",
+        "description": "print duration of each action?"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "boolean"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options.timestamp",
+        "description": "print timestamp with each action?"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options.colors",
+        "description": "custom colors"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options.logger",
+        "description": "implementation of the `console` API"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "boolean"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options.logErrors",
+        "description": "should errors in action execution be caught, logged, and re-thrown?"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "boolean"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options.collapsed",
+        "description": "is group collapsed?"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "boolean"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options.predicate",
+        "description": "condition which resolves logger behavior"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "function"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options.stateTransformer",
+        "description": "transform state before print"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "function"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options.actionTransformer",
+        "description": "transform action before print"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "function"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options.errorTransformer",
+        "description": "transform error before print"
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 14,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "lib/metaRouter.js",
+    "memberof": null,
+    "longname": "lib/metaRouter.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import timeoutScheduler from './timeoutScheduler'\r\n/*import identityHandler from './identityHandler'\r\nimport apiDispatcher from './apiDispatcher'\r\nimport routeHandler from './routeHandler'\r\n*/\r\nimport idleMiddleware from './idleMiddleware'\r\n//import errorHandler from './errorHandler'\r\n\r\n/**\r\n * Lets you dispatch special actions with a { meta } field.\r\n *\r\n * This middleware will chain through all middleware specified in metaMap in\r\n * order and return the result.\r\n */\r\nexport const createMetaRouter = (metaMap = new Map( [ [ 'delay', timeoutScheduler ]\r\n                                                  /*, [ 'identity', identityHandler ]\r\n                                                    , [ 'api', apiDispatcher ]\r\n                                                    , [ 'route', routeHandler ]*/\r\n                                                    , [ 'idle', idleMiddleware ]\r\n                                                  //, [ 'err', errorHandler ]\r\n                                                    ] )) => store => next => action => {\r\n  if(!action.meta)\r\n    return next(action)\r\n  console.warn('META TYPE DETECTED', action.meta)\r\n  const metaTypes = Object.keys(action.meta)\r\n  let result = metaTypes.filter(x => metaMap.has(x))\r\n                        .map(x => metaMap.get(x))\r\n                        .reduce((last, middleware) => middleware(store)(next)(last), action)\r\n  console.warn('META TYPE RESULT', result)\r\n  return next(result)\r\n}\r\n\r\nexport default createMetaRouter()\r\n"
+  },
+  {
+    "__docId__": 15,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "createMetaRouter",
+    "memberof": "lib/metaRouter.js",
+    "longname": "lib/metaRouter.js~createMetaRouter",
+    "access": null,
+    "export": true,
+    "importPath": "redux-middleware/lib/metaRouter.js",
+    "importStyle": "{createMetaRouter}",
+    "description": "Lets you dispatch special actions with a { meta } field.\n\nThis middleware will chain through all middleware specified in metaMap in\norder and return the result.",
+    "lineNumber": 15,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 16,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "lib/rafScheduler.js",
+    "memberof": null,
+    "longname": "lib/rafScheduler.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "/**\r\n * Schedules actions with { meta: { raf: true } } to be dispatched inside a rAF loop\r\n * frame.  Makes `dispatch` return a function to remove the action from the queue in\r\n * this case.\r\n */\r\nconst rafScheduler = store => next => {\r\n  let queuedActions = []\r\n  let frame = null\r\n\r\n  function loop() {\r\n    frame = null\r\n    try {\r\n      if (queuedActions.length) {\r\n        next(queuedActions.shift())\r\n      }\r\n    } finally {\r\n      maybeRaf()\r\n    }\r\n  }\r\n\r\n  function maybeRaf() {\r\n    if (queuedActions.length && !frame) {\r\n      frame = requestAnimationFrame(loop)\r\n    }\r\n  }\r\n\r\n  return action => {\r\n    if (!action.meta || !action.meta.raf) {\r\n      return next(action)\r\n    }\r\n\r\n    queuedActions.push(action)\r\n    maybeRaf()\r\n\r\n    return function cancel() {\r\n      queuedActions = queuedActions.filter(a => a !== action)\r\n    }\r\n  }\r\n}\r\n\r\nexport default rafScheduler\r\n"
+  },
+  {
+    "__docId__": 17,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "rafScheduler",
+    "memberof": "lib/rafScheduler.js",
+    "longname": "lib/rafScheduler.js~rafScheduler",
+    "access": null,
+    "export": true,
+    "importPath": "redux-middleware/lib/rafScheduler.js",
+    "importStyle": "rafScheduler",
+    "description": "Schedules actions with { meta: { raf: true } } to be dispatched inside a rAF loop\nframe.  Makes `dispatch` return a function to remove the action from the queue in\nthis case.",
+    "lineNumber": 6,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 18,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "lib/readyStatePromise.js",
+    "memberof": null,
+    "longname": "lib/readyStatePromise.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "/**\r\n * Lets you dispatch special actions with a { promise } field.\r\n *\r\n * This middleware will turn them into a single action at the beginning,\r\n * and a single success (or failure) action when the `promise` resolves.\r\n *\r\n * For convenience, `dispatch` will return the promise so the caller can wait.\r\n */\r\nconst readyStatePromise = store => next => action => {\r\n  if (!action.promise) {\r\n    return next(action)\r\n  }\r\n\r\n  function makeAction(ready, data) {\r\n    let newAction = Object.assign({}, action, { ready }, data)\r\n    delete newAction.promise\r\n    return newAction\r\n  }\r\n\r\n  next(makeAction(false))\r\n  return action.promise.then(\r\n    result => next(makeAction(true, { result })),\r\n    error => next(makeAction(true, { error }))\r\n  )\r\n}\r\n\r\nexport default readyStatePromise\r\n"
+  },
+  {
+    "__docId__": 19,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "readyStatePromise",
+    "memberof": "lib/readyStatePromise.js",
+    "longname": "lib/readyStatePromise.js~readyStatePromise",
+    "access": null,
+    "export": true,
+    "importPath": "redux-middleware/lib/readyStatePromise.js",
+    "importStyle": "readyStatePromise",
+    "description": "Lets you dispatch special actions with a { promise } field.\n\nThis middleware will turn them into a single action at the beginning,\nand a single success (or failure) action when the `promise` resolves.\n\nFor convenience, `dispatch` will return the promise so the caller can wait.",
+    "lineNumber": 9,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 20,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "lib/sweetAlert.js",
+    "memberof": null,
+    "longname": "lib/sweetAlert.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import { createAction } from 'redux-action'\r\n\r\nexport const SHOW_ALERT = 'SHOW_ALERT'\r\nexport const HIDE_ALERT = 'SHOW_ALERT'\r\n\r\n\r\nconst defaultProps =  { title: 'Still There?'\r\n                      , text: 'You will be logged out due to inactivity shortly.'\r\n                      , animation: 'slide-from-top'\r\n                      , showConfirmButton: false\r\n                      , html: true\r\n                      , type: 'warning'\r\n                      }\r\n\r\nexport const showAlert = createAction(SHOW_ALERT, (props = defaultProps) => props, ({ duration = 0 }) => ({ alert: { id: duration } }))\r\n\r\nconst sweetAlert = store => next => action => {\r\n  let swalTimeout = null\r\n  if(postState.actionName === 'INACTIVE') {\r\n    log.info('SWAL ACTIVE => SHOW')\r\n    swal( )\r\n  } else if(postState.actionName === 'EXPIRED') {\r\n    log.info('SWAL EXPIRED => HIDE IN 2 SECONDS')\r\n    dispatch(forgetTokens())\r\n    swalTimeout = setTimeout(() => swal.close(), 2000)\r\n  } else {\r\n    log.info('SWAL ELSE => HIDE NOW')\r\n    clearTimeout(swalTimeout)\r\n    swal.close()\r\n  }\r\n\r\n\r\n}\r\n\r\nexport default thunk\r\n"
+  },
+  {
+    "__docId__": 21,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "SHOW_ALERT",
+    "memberof": "lib/sweetAlert.js",
+    "longname": "lib/sweetAlert.js~SHOW_ALERT",
+    "access": null,
+    "export": true,
+    "importPath": "redux-middleware/lib/sweetAlert.js",
+    "importStyle": "{SHOW_ALERT}",
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "type": {
+      "types": [
+        "string"
+      ]
+    }
+  },
+  {
+    "__docId__": 22,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "HIDE_ALERT",
+    "memberof": "lib/sweetAlert.js",
+    "longname": "lib/sweetAlert.js~HIDE_ALERT",
+    "access": null,
+    "export": true,
+    "importPath": "redux-middleware/lib/sweetAlert.js",
+    "importStyle": "{HIDE_ALERT}",
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "type": {
+      "types": [
+        "string"
+      ]
+    }
+  },
+  {
+    "__docId__": 23,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "defaultProps",
+    "memberof": "lib/sweetAlert.js",
+    "longname": "lib/sweetAlert.js~defaultProps",
+    "access": null,
+    "export": false,
+    "importPath": "redux-middleware/lib/sweetAlert.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 7,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 24,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "showAlert",
+    "memberof": "lib/sweetAlert.js",
+    "longname": "lib/sweetAlert.js~showAlert",
+    "access": null,
+    "export": true,
+    "importPath": "redux-middleware/lib/sweetAlert.js",
+    "importStyle": "{showAlert}",
+    "description": null,
+    "lineNumber": 15,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 25,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "sweetAlert",
+    "memberof": "lib/sweetAlert.js",
+    "longname": "lib/sweetAlert.js~sweetAlert",
+    "access": null,
+    "export": false,
+    "importPath": "redux-middleware/lib/sweetAlert.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 17,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 26,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "lib/thunk.js",
+    "memberof": null,
+    "longname": "lib/thunk.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "/**\r\n * Lets you dispatch a function instead of an action.\r\n * This function will receive `dispatch` and `getState` as arguments.\r\n *\r\n * Useful for early exits (conditions over `getState()`), as well\r\n * as for async control flow (it can `dispatch()` something else).\r\n *\r\n * `dispatch` will return the return value of the dispatched function.\r\n */\r\nconst thunk = store => next => action =>\r\n  typeof action === 'function' ?\r\n    action(store.dispatch, store.getState) :\r\n    next(action)\r\n\r\nexport default thunk\r\n"
+  },
+  {
+    "__docId__": 27,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "thunk",
+    "memberof": "lib/thunk.js",
+    "longname": "lib/thunk.js~thunk",
+    "access": null,
+    "export": true,
+    "importPath": "redux-middleware/lib/thunk.js",
+    "importStyle": "thunk",
+    "description": "Lets you dispatch a function instead of an action.\nThis function will receive `dispatch` and `getState` as arguments.\n\nUseful for early exits (conditions over `getState()`), as well\nas for async control flow (it can `dispatch()` something else).\n\n`dispatch` will return the return value of the dispatched function.",
+    "lineNumber": 10,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 28,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "lib/timeoutScheduler.js",
+    "memberof": null,
+    "longname": "lib/timeoutScheduler.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "/**\r\n * Schedules actions with { meta: { delay: N } } to be delayed by N milliseconds.\r\n * Makes `dispatch` return a function to cancel the timeout in this case.\r\n */\r\nconst timeoutScheduler = store => next => action => {\r\n  if (!action.meta || !action.meta.delay)\r\n    return next(action)\r\n\r\n  let timeoutID = setTimeout(() => {\r\n    console.warn(`TIMEOUT SCHEDULER => type: ${action.type} delay: ${action.meta.delay} MS`)\r\n    next(action)\r\n  }, action.meta.delay)\r\n\r\n  return function cancel() {\r\n    console.warn(`TIMEOUT CANCELLED => ${timeoutID}`)\r\n    clearTimeout(timeoutID)\r\n  }\r\n}\r\n\r\nexport default timeoutScheduler\r\n"
+  },
+  {
+    "__docId__": 29,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "timeoutScheduler",
+    "memberof": "lib/timeoutScheduler.js",
+    "longname": "lib/timeoutScheduler.js~timeoutScheduler",
+    "access": null,
+    "export": true,
+    "importPath": "redux-middleware/lib/timeoutScheduler.js",
+    "importStyle": "timeoutScheduler",
+    "description": "Schedules actions with { meta: { delay: N } } to be delayed by N milliseconds.\nMakes `dispatch` return a function to cancel the timeout in this case.",
+    "lineNumber": 5,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 30,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "lib/vanillaPromise.js",
+    "memberof": null,
+    "longname": "lib/vanillaPromise.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "/**\r\n * Lets you dispatch promises in addition to actions.\r\n * If the promise is resolved, its result will be dispatched as an action.\r\n * The promise is returned from `dispatch` so the caller may handle rejection.\r\n */\r\nconst vanillaPromise = store => next => action => {\r\n  if (typeof action.then !== 'function') {\r\n    return next(action)\r\n  }\r\n\r\n  return Promise.resolve(action).then(store.dispatch)\r\n}\r\n\r\nexport default vanillaPromise\r\n"
+  },
+  {
+    "__docId__": 31,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "vanillaPromise",
+    "memberof": "lib/vanillaPromise.js",
+    "longname": "lib/vanillaPromise.js~vanillaPromise",
+    "access": null,
+    "export": true,
+    "importPath": "redux-middleware/lib/vanillaPromise.js",
+    "importStyle": "vanillaPromise",
+    "description": "Lets you dispatch promises in addition to actions.\nIf the promise is resolved, its result will be dispatched as an action.\nThe promise is returned from `dispatch` so the caller may handle rejection.",
+    "lineNumber": 6,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 33,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Infinity",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Infinity",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 34,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "NaN",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~NaN",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 35,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "undefined",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~undefined",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 36,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "null",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~null",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 37,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Object",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 38,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~object",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 39,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Function",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 40,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~function",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 41,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Boolean",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 42,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~boolean",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 43,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Symbol",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Symbol",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 44,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Error",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Error",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 45,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "EvalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~EvalError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 46,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "InternalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~InternalError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 47,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "RangeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RangeError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 48,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "ReferenceError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ReferenceError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 49,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "SyntaxError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~SyntaxError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 50,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "TypeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~TypeError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 51,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "URIError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~URIError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 52,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Number",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 53,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~number",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 54,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Date",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Date",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 55,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "String",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~String",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 56,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "string",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~string",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 57,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "RegExp",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RegExp",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 58,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 59,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Int8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int8Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 60,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 61,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint8ClampedArray",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8ClampedArray",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 62,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Int16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int16Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 63,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint16Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 64,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Int32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 65,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 66,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Float32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 67,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Float64Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float64Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 68,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Map",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Map",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 69,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Set",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Set",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 70,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "WeakMap",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakMap",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 71,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "WeakSet",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakSet",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 72,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "ArrayBuffer",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ArrayBuffer",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 73,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "DataView",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~DataView",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 74,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "JSON",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~JSON",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 75,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Promise",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Promise",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 76,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Generator",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Generator",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 77,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "GeneratorFunction",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~GeneratorFunction",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 78,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Reflect",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Reflect",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 79,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Proxy",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Proxy",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 81,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "CanvasRenderingContext2D",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~CanvasRenderingContext2D",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 82,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "DocumentFragment",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~DocumentFragment",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 83,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Element",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Element",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~Element",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 84,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Event",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Event",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~Event",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 85,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Node",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Node",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~Node",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 86,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "NodeList",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/NodeList",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~NodeList",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 87,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "XMLHttpRequest",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~XMLHttpRequest",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 88,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "AudioContext",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/AudioContext",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~AudioContext",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  }
+]
