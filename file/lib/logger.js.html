@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">lib/logger.js | redux-middleware API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/cchamberlain/redux-middleware" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-middleware">middleware</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createLogger">createLogger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-crashReporter">crashReporter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-createIdleMiddleware">createIdleMiddleware</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-applyLogicalMiddleware">applyLogicalMiddleware</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-createMetaRouter">createMetaRouter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-rafScheduler">rafScheduler</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-readyStatePromise">readyStatePromise</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-HIDE_ALERT">HIDE_ALERT</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-SHOW_ALERT">SHOW_ALERT</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-showAlert">showAlert</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-thunk">thunk</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-timeoutScheduler">timeoutScheduler</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-vanillaPromise">vanillaPromise</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">lib/logger.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/** redux-logger with different defaults. */
+
+const repeat = (str, times) =&gt; (new Array(times + 1)).join(str)
+const pad = (num, maxLength) =&gt; repeat(&apos;0&apos;, maxLength - num.toString().length) + num
+const formatTime = (time) =&gt; `@ ${pad(time.getHours(), 2)}:${pad(time.getMinutes(), 2)}:${pad(time.getSeconds(), 2)}.${pad(time.getMilliseconds(), 3)}`
+
+// Use the new performance api to get better precision if available
+const timer = typeof performance !== &apos;undefined&apos; &amp;&amp; typeof performance.now === &apos;function&apos; ? performance : Date
+
+
+/**
+ * parse the level option of createLogger
+ *
+ * @property {string | function | object} level - console[level]
+ * @property {object} action
+ * @property {array} payload
+ * @property {string} type
+ */
+
+function getLogLevel(level, action, payload, type) {
+  switch (typeof level) {
+  case &apos;object&apos;:
+    return typeof level[type] === &apos;function&apos; ? level[type](...payload) : level[type]
+  case &apos;function&apos;:
+    return level(action)
+  default:
+    return level
+  }
+}
+
+/**
+ * Creates logger with followed options
+ *
+ * @namespace
+ * @property {object} options - options for logger
+ * @property {string | function | object} options.level - console[level]
+ * @property {boolean} options.duration - print duration of each action?
+ * @property {boolean} options.timestamp - print timestamp with each action?
+ * @property {object} options.colors - custom colors
+ * @property {object} options.logger - implementation of the `console` API
+ * @property {boolean} options.logErrors - should errors in action execution be caught, logged, and re-thrown?
+ * @property {boolean} options.collapsed - is group collapsed?
+ * @property {boolean} options.predicate - condition which resolves logger behavior
+ * @property {function} options.stateTransformer - transform state before print
+ * @property {function} options.actionTransformer - transform action before print
+ * @property {function} options.errorTransformer - transform error before print
+ */
+
+export default function createLogger(options = {}) {
+  const {
+    level = &apos;log&apos;,
+    logger = console,
+    logErrors = true,
+    collapsed = true,
+    predicate,
+    duration = false,
+    timestamp = true,
+    transformer, // deprecated
+    stateTransformer = state =&gt; state,
+    actionTransformer = actn =&gt; actn,
+    errorTransformer = error =&gt; error,
+    colors = {
+      title: () =&gt; &apos;#000000&apos;,
+      prevState: () =&gt; &apos;#9E9E9E&apos;,
+      action: () =&gt; &apos;#03A9F4&apos;,
+      nextState: () =&gt; &apos;#4CAF50&apos;,
+      error: () =&gt; &apos;#F20404&apos;
+    }
+  } = options
+
+  // exit if console undefined
+  if (typeof logger === &apos;undefined&apos;) {
+    return () =&gt; next =&gt; action =&gt; next(action)
+  }
+
+  if (transformer) {
+    console.error(&apos;Option \&apos;transformer\&apos; is deprecated, use stateTransformer instead&apos;)
+  }
+
+  const logBuffer = []
+  function printBuffer() {
+    logBuffer.forEach((logEntry, key) =&gt; {
+      const { started, startedTime, action, prevState, error } = logEntry
+      let { took, nextState } = logEntry
+      const nextEntry = logBuffer[key + 1]
+      if (nextEntry) {
+        nextState = nextEntry.prevState
+        took = nextEntry.started - started
+      }
+      // message
+      const formattedAction = actionTransformer(action)
+      const isCollapsed = (typeof collapsed === &apos;function&apos;) ? collapsed(() =&gt; nextState, action) : collapsed
+
+      const formattedTime = formatTime(startedTime)
+      const titleCSS = colors.title ? `color: ${colors.title(formattedAction)};` : null
+      const title = `action ${timestamp ? formattedTime : &apos;&apos;} ${formattedAction.type} ${duration ? `(in ${took.toFixed(2)} ms)` : &apos;&apos;}`
+
+      // render
+      try {
+        if (isCollapsed) {
+          if (colors.title) logger.groupCollapsed(`%c ${title}`, titleCSS)
+          else logger.groupCollapsed(title)
+        } else {
+          if (colors.title) logger.group(`%c ${title}`, titleCSS)
+          else logger.group(title)
+        }
+      } catch (e) {
+        logger.log(title)
+      }
+
+      const prevStateLevel = getLogLevel(level, formattedAction, [prevState], &apos;prevState&apos;)
+      const actionLevel = getLogLevel(level, formattedAction, [formattedAction], &apos;action&apos;)
+      const errorLevel = getLogLevel(level, formattedAction, [error, prevState], &apos;error&apos;)
+      const nextStateLevel = getLogLevel(level, formattedAction, [nextState], &apos;nextState&apos;)
+
+      if (prevStateLevel) {
+        if (colors.prevState) logger[prevStateLevel](&apos;%c prev state&apos;, `color: ${colors.prevState(prevState)}; font-weight: bold`, prevState)
+        else logger[prevStateLevel](&apos;prev state&apos;, prevState)
+      }
+
+      if (actionLevel) {
+        if (colors.action) logger[actionLevel](&apos;%c action&apos;, `color: ${colors.action(formattedAction)}; font-weight: bold`, formattedAction)
+        else logger[actionLevel](&apos;action&apos;, formattedAction)
+      }
+
+      if (error &amp;&amp; errorLevel) {
+        if (colors.error) logger[errorLevel](&apos;%c error&apos;, `color: ${colors.error(error, prevState)}; font-weight: bold`, error)
+        else logger[errorLevel](&apos;error&apos;, error)
+      }
+
+      if (nextStateLevel) {
+        if (colors.nextState) logger[nextStateLevel](&apos;%c next state&apos;, `color: ${colors.nextState(nextState)}; font-weight: bold`, nextState)
+        else logger[nextStateLevel](&apos;next state&apos;, nextState)
+      }
+
+      try {
+        logger.groupEnd()
+      } catch (e) {
+        logger.log(&apos;&#x2014;&#x2014; log end &#x2014;&#x2014;&apos;)
+      }
+    })
+    logBuffer.length = 0
+  }
+
+  return ({ getState }) =&gt; (next) =&gt; (action) =&gt; {
+    // exit early if predicate function returns false
+    if (typeof predicate === &apos;function&apos; &amp;&amp; !predicate(getState, action))
+      return next(action)
+
+    const logEntry = {}
+    logBuffer.push(logEntry)
+
+    logEntry.started = timer.now()
+    logEntry.startedTime = new Date()
+    logEntry.prevState = stateTransformer(getState())
+    logEntry.action = action
+
+    let returnedValue
+    if (logErrors) {
+      try {
+        returnedValue = next(action)
+      } catch (e) {
+        logEntry.error = errorTransformer(e)
+      }
+    } else
+      returnedValue = next(action)
+
+    logEntry.took = timer.now() - logEntry.started
+    logEntry.nextState = stateTransformer(getState())
+
+    printBuffer()
+
+    if (logEntry.error) throw logEntry.error
+    return returnedValue
+  }
+}
+
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.6)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
