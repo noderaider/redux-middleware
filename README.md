@@ -1,3 +1,5 @@
+# redux-middleware
+
 **All the common redux middleware**
 
 **Disclaimer: This library is in early development alongside redux-addons. It will be changing rapidly and is not ready for production use.**
@@ -6,8 +8,9 @@
 
 Will install middlewares to:
 
-ES5   => 'redux-middleware/lib'
-ES6+  => 'redux-middleware/src/lib'
+`ES5   => 'redux-middleware/lib'`
+
+`ES6+  => 'redux-middleware/src/lib'`
 
 ## Usage
 
