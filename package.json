@@ -8,14 +8,16 @@
     "doc"
   ],
   "scripts": {
-    "predoc": "rimraf doc",
-    "doc": "esdoc -c ./esdoc.json",
     "prebuild": "rimraf build",
     "build": "babel src/lib -d lib",
     "watch": "npm run build -- --watch",
+    "predoc": "rimraf doc",
+    "doc": "esdoc -c ./esdoc.json",
     "prerelease": "npm run build",
     "release": "npm version patch && npm publish",
-    "release-pages": "git checkout gh-pages && git merge master && npm run doc"
+    "postrelease": "npm run release-doc",
+    "prerelease-doc": "npm run doc",
+    "release-doc": "git subtree push --prefix doc origin gh-pages",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
