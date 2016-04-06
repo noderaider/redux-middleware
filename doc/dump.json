@@ -43,7 +43,7 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "/** When context has already been created, it can be shared to middleware component. */\r\n\r\nexport const createIdleMiddleware = (context = {}) => {\r\n  //const createDispatcher = configureDispatcher(context)\r\n  const isIdleAction = ({ meta }) => meta && meta.idle\r\n\r\n  return store => next => action => {\r\n    if(!isIdleAction(action))\r\n      return next(action)\r\n\r\n    const { idle } = action.meta\r\n    const { dispatch, getState } = store\r\n    //const dispatcher = createDispatcher(dispatch, getState)\r\n    if(!actionNames.includes(action.type))\r\n      return next(action)\r\n    return next(action)\r\n  }\r\n}\r\n\r\n\r\nexport default createIdleMiddleware()\r\n"
+    "content": "/** When context has already been created, it can be shared to middleware component. */\r\nimport { createAction } from 'redux-actions'\r\n\r\nconst createIdleMiddleware = (context = {}) => {\r\n  //const createDispatcher = configureDispatcher(context)\r\n  const isIdleAction = ({ type, payload, meta }) => ['IDLEMONITOR_JS_ACTIVITY', 'IDLEMONITOR_JS_ACTIVE', 'IDLEMONITOR_JS_INACTIVE', 'IDLEMONITOR_JS_EXPIRED'].includes(type)\r\n  let cancel = () => {}\r\n\r\n  return store => next => action => {\r\n    if(!isIdleAction(action))\r\n      return next(action)\r\n\r\n    //const { idle } = action.meta\r\n    const { dispatch, getState } = store\r\n    switch(action.type) {\r\n      case 'IDLEMONITOR_JS_ACTIVE':\r\n        //cancel()\r\n        console.warn('SCHEDULING INACTIVE!')\r\n        cancel = dispatch(createAction('IDLEMONITOR_JS_INACTIVE', payload => payload, () => { meta: { delay: 6000 } }))\r\n        break\r\n      case 'IDLEMONITOR_JS_INACTIVE':\r\n        //cancel()\r\n        console.warn('SCHEDULING EXPIRED!')\r\n        cancel = dispatch(createAction('IDLEMONITOR_JS_EXPIRED', payload => payload, () => { meta: { delay: 6000 } }))\r\n        break\r\n      case 'IDLEMONITOR_JS_EXPIRED':\r\n        dispatch(createAction('FORGET_TOKENS')())\r\n    }\r\n\r\n    return next(action)\r\n  //return { next: 'EXPIRED', delay: 6000 }\r\n\r\n  //swal.close()\r\n  }\r\n}\r\n\r\n\r\nexport default createIdleMiddleware()\r\n"
   },
   {
     "__docId__": 3,
@@ -54,11 +54,12 @@
     "memberof": "lib/idleMiddleware.js",
     "longname": "lib/idleMiddleware.js~createIdleMiddleware",
     "access": null,
-    "export": true,
+    "export": false,
     "importPath": "redux-middleware/lib/idleMiddleware.js",
-    "importStyle": "{createIdleMiddleware}",
-    "description": "When context has already been created, it can be shared to middleware component.",
-    "lineNumber": 3,
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
     "type": {
       "types": [
         "*"
@@ -76,7 +77,7 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "import { applyMiddleware } from 'redux'\r\n\r\n//import metaRouter from './metaRouter'\r\nimport timeoutScheduler from './timeoutScheduler'\r\nimport thunk from './thunk'\r\nimport readyStatePromise from './readyStatePromise'\r\nimport createLogger from './logger'\r\nimport crashReporter from './crashReporter'\r\n\r\n\r\n/** Default array of useful redux middleware */\r\nexport default function middleware() {\r\n  const logger = createLogger()\r\n  return  [ timeoutScheduler\r\n          , thunk\r\n          , readyStatePromise\r\n          , logger\r\n          , crashReporter\r\n          ]\r\n}\r\n\r\nexport const applyLogicalMiddleware = () => applyMiddleware(...middleware())\r\n"
+    "content": "import { applyMiddleware } from 'redux'\r\n\r\n//import metaRouter from './metaRouter'\r\nimport timeoutScheduler from './timeoutScheduler'\r\nimport idleMiddleware from './idleMiddleware'\r\nimport thunk from './thunk'\r\nimport readyStatePromise from './readyStatePromise'\r\nimport createLogger from './logger'\r\nimport crashReporter from './crashReporter'\r\n\r\n\r\n/** Default array of useful redux middleware */\r\nexport default function middleware() {\r\n  const logger = createLogger()\r\n  return  [ idleMiddleware\r\n          , timeoutScheduler\r\n          , thunk\r\n\r\n          , readyStatePromise\r\n          , logger\r\n          , crashReporter\r\n          ]\r\n}\r\n\r\nexport const applyLogicalMiddleware = () => applyMiddleware(...middleware())\r\n"
   },
   {
     "__docId__": 5,
@@ -91,7 +92,7 @@
     "importPath": "redux-middleware",
     "importStyle": "middleware",
     "description": "Default array of useful redux middleware",
-    "lineNumber": 12,
+    "lineNumber": 13,
     "params": [],
     "return": {
       "types": [
@@ -113,7 +114,7 @@
     "importPath": "redux-middleware",
     "importStyle": "{applyLogicalMiddleware}",
     "description": null,
-    "lineNumber": 22,
+    "lineNumber": 25,
     "undocument": true,
     "type": {
       "types": [

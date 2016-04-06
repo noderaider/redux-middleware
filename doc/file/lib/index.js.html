@@ -35,7 +35,6 @@
   <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-middleware">middleware</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createLogger">createLogger</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-crashReporter">crashReporter</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-createIdleMiddleware">createIdleMiddleware</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-applyLogicalMiddleware">applyLogicalMiddleware</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-createMetaRouter">createMetaRouter</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-rafScheduler">rafScheduler</a></span></span></li>
@@ -55,6 +54,7 @@
 
 //import metaRouter from &apos;./metaRouter&apos;
 import timeoutScheduler from &apos;./timeoutScheduler&apos;
+import idleMiddleware from &apos;./idleMiddleware&apos;
 import thunk from &apos;./thunk&apos;
 import readyStatePromise from &apos;./readyStatePromise&apos;
 import createLogger from &apos;./logger&apos;
@@ -64,8 +64,10 @@ import crashReporter from &apos;./crashReporter&apos;
 /** Default array of useful redux middleware */
 export default function middleware() {
   const logger = createLogger()
-  return  [ timeoutScheduler
+  return  [ idleMiddleware
+          , timeoutScheduler
           , thunk
+
           , readyStatePromise
           , logger
           , crashReporter

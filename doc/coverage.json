@@ -1,7 +1,7 @@
 {
-  "coverage": "71.42%",
-  "expectCount": 14,
-  "actualCount": 10,
+  "coverage": "69.23%",
+  "expectCount": 13,
+  "actualCount": 9,
   "files": {
     "lib/sweetAlert.js": {
       "expectCount": 3,
@@ -16,15 +16,10 @@
       "expectCount": 2,
       "actualCount": 1,
       "undocumentLines": [
-        22
+        25
       ]
     },
     "lib/crashReporter.js": {
-      "expectCount": 1,
-      "actualCount": 1,
-      "undocumentLines": []
-    },
-    "lib/idleMiddleware.js": {
       "expectCount": 1,
       "actualCount": 1,
       "undocumentLines": []

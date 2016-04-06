@@ -24,12 +24,6 @@ window.esdocSearchIndex = [
     "variable"
   ],
   [
-    "redux-middleware/lib/idlemiddleware.js~createidlemiddleware",
-    "variable/index.html#static-variable-createIdleMiddleware",
-    "<span>createIdleMiddleware</span> <span class=\"search-result-import-path\">redux-middleware/lib/idleMiddleware.js</span>",
-    "variable"
-  ],
-  [
     "redux-middleware/lib/logger.js~createlogger",
     "function/index.html#static-function-createLogger",
     "<span>createLogger</span> <span class=\"search-result-import-path\">redux-middleware/lib/logger.js</span>",
