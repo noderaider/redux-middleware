@@ -35,7 +35,6 @@
   <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-middleware">middleware</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createLogger">createLogger</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-crashReporter">crashReporter</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-createIdleMiddleware">createIdleMiddleware</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-applyLogicalMiddleware">applyLogicalMiddleware</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-createMetaRouter">createMetaRouter</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-rafScheduler">rafScheduler</a></span></span></li>
@@ -52,21 +51,38 @@
 
 <div class="content" data-ice="content"><h1 data-ice="title">lib/idleMiddleware.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/** When context has already been created, it can be shared to middleware component. */
+import { createAction } from &apos;redux-actions&apos;
 
-export const createIdleMiddleware = (context = {}) =&gt; {
+const createIdleMiddleware = (context = {}) =&gt; {
   //const createDispatcher = configureDispatcher(context)
-  const isIdleAction = ({ meta }) =&gt; meta &amp;&amp; meta.idle
+  const isIdleAction = ({ type, payload, meta }) =&gt; [&apos;IDLEMONITOR_JS_ACTIVITY&apos;, &apos;IDLEMONITOR_JS_ACTIVE&apos;, &apos;IDLEMONITOR_JS_INACTIVE&apos;, &apos;IDLEMONITOR_JS_EXPIRED&apos;].includes(type)
+  let cancel = () =&gt; {}
 
   return store =&gt; next =&gt; action =&gt; {
     if(!isIdleAction(action))
       return next(action)
 
-    const { idle } = action.meta
+    //const { idle } = action.meta
     const { dispatch, getState } = store
-    //const dispatcher = createDispatcher(dispatch, getState)
-    if(!actionNames.includes(action.type))
-      return next(action)
+    switch(action.type) {
+      case &apos;IDLEMONITOR_JS_ACTIVE&apos;:
+        //cancel()
+        console.warn(&apos;SCHEDULING INACTIVE!&apos;)
+        cancel = dispatch(createAction(&apos;IDLEMONITOR_JS_INACTIVE&apos;, payload =&gt; payload, () =&gt; { meta: { delay: 6000 } }))
+        break
+      case &apos;IDLEMONITOR_JS_INACTIVE&apos;:
+        //cancel()
+        console.warn(&apos;SCHEDULING EXPIRED!&apos;)
+        cancel = dispatch(createAction(&apos;IDLEMONITOR_JS_EXPIRED&apos;, payload =&gt; payload, () =&gt; { meta: { delay: 6000 } }))
+        break
+      case &apos;IDLEMONITOR_JS_EXPIRED&apos;:
+        dispatch(createAction(&apos;FORGET_TOKENS&apos;)())
+    }
+
     return next(action)
+  //return { next: &apos;EXPIRED&apos;, delay: 6000 }
+
+  //swal.close()
   }
 }
 
