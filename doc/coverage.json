@@ -1,6 +1,6 @@
 {
-  "coverage": "69.23%",
-  "expectCount": 13,
+  "coverage": "75%",
+  "expectCount": 12,
   "actualCount": 9,
   "files": {
     "lib/sweetAlert.js": {
@@ -10,13 +10,6 @@
         4,
         3,
         15
-      ]
-    },
-    "lib/index.js": {
-      "expectCount": 2,
-      "actualCount": 1,
-      "undocumentLines": [
-        25
       ]
     },
     "lib/crashReporter.js": {
@@ -30,6 +23,11 @@
       "undocumentLines": []
     },
     "lib/metaRouter.js": {
+      "expectCount": 1,
+      "actualCount": 1,
+      "undocumentLines": []
+    },
+    "lib/index.js": {
       "expectCount": 1,
       "actualCount": 1,
       "undocumentLines": []
