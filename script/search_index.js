@@ -12,12 +12,6 @@ window.esdocSearchIndex = [
     "variable"
   ],
   [
-    "redux-middleware~applylogicalmiddleware",
-    "variable/index.html#static-variable-applyLogicalMiddleware",
-    "<span>applyLogicalMiddleware</span> <span class=\"search-result-import-path\">redux-middleware</span>",
-    "variable"
-  ],
-  [
     "redux-middleware/lib/crashreporter.js~crashreporter",
     "variable/index.html#static-variable-crashReporter",
     "<span>crashReporter</span> <span class=\"search-result-import-path\">redux-middleware/lib/crashReporter.js</span>",
