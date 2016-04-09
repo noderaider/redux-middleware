@@ -1,14 +1,14 @@
 {
   "type": "Program",
   "start": 0,
-  "end": 647,
+  "end": 401,
   "loc": {
     "start": {
       "line": 1,
       "column": 0
     },
     "end": {
-      "line": 25,
+      "line": 11,
       "column": 0
     }
   },
@@ -124,7 +124,7 @@
     {
       "type": "ExportNamedDeclaration",
       "start": 84,
-      "end": 133,
+      "end": 137,
       "loc": {
         "start": {
           "line": 4,
@@ -132,14 +132,14 @@
         },
         "end": {
           "line": 4,
-          "column": 49
+          "column": 53
         }
       },
       "specifiers": [
         {
           "type": "Identifier",
           "start": 91,
-          "end": 107,
+          "end": 109,
           "loc": {
             "start": {
               "line": 4,
@@ -147,13 +147,13 @@
             },
             "end": {
               "line": 4,
-              "column": 23
+              "column": 25
             }
           },
           "exported": {
             "type": "Identifier",
             "start": 91,
-            "end": 107,
+            "end": 109,
             "loc": {
               "start": {
                 "line": 4,
@@ -161,10 +161,10 @@
               },
               "end": {
                 "line": 4,
-                "column": 23
+                "column": 25
               }
             },
-            "name": "timeoutScheduler",
+            "name": "debuggerMiddleware",
             "leadingComments": null
           },
           "leadingComments": null
@@ -172,21 +172,21 @@
       ],
       "source": {
         "type": "Literal",
-        "start": 113,
-        "end": 133,
+        "start": 115,
+        "end": 137,
         "loc": {
           "start": {
             "line": 4,
-            "column": 29
+            "column": 31
           },
           "end": {
             "line": 4,
-            "column": 49
+            "column": 53
           }
         },
-        "value": "./timeoutScheduler",
-        "rawValue": "./timeoutScheduler",
-        "raw": "'./timeoutScheduler'"
+        "value": "./debuggerMiddleware",
+        "rawValue": "./debuggerMiddleware",
+        "raw": "'./debuggerMiddleware'"
       },
       "leadingComments": [
         {
@@ -213,8 +213,8 @@
     },
     {
       "type": "ExportNamedDeclaration",
-      "start": 135,
-      "end": 180,
+      "start": 139,
+      "end": 188,
       "loc": {
         "start": {
           "line": 5,
@@ -222,14 +222,14 @@
         },
         "end": {
           "line": 5,
-          "column": 45
+          "column": 49
         }
       },
       "specifiers": [
         {
           "type": "Identifier",
-          "start": 142,
-          "end": 156,
+          "start": 146,
+          "end": 162,
           "loc": {
             "start": {
               "line": 5,
@@ -237,13 +237,13 @@
             },
             "end": {
               "line": 5,
-              "column": 21
+              "column": 23
             }
           },
           "exported": {
             "type": "Identifier",
-            "start": 142,
-            "end": 156,
+            "start": 146,
+            "end": 162,
             "loc": {
               "start": {
                 "line": 5,
@@ -251,6 +251,72 @@
               },
               "end": {
                 "line": 5,
+                "column": 23
+              }
+            },
+            "name": "timeoutScheduler"
+          }
+        }
+      ],
+      "source": {
+        "type": "Literal",
+        "start": 168,
+        "end": 188,
+        "loc": {
+          "start": {
+            "line": 5,
+            "column": 29
+          },
+          "end": {
+            "line": 5,
+            "column": 49
+          }
+        },
+        "value": "./timeoutScheduler",
+        "rawValue": "./timeoutScheduler",
+        "raw": "'./timeoutScheduler'"
+      }
+    },
+    {
+      "type": "ExportNamedDeclaration",
+      "start": 190,
+      "end": 235,
+      "loc": {
+        "start": {
+          "line": 6,
+          "column": 0
+        },
+        "end": {
+          "line": 6,
+          "column": 45
+        }
+      },
+      "specifiers": [
+        {
+          "type": "Identifier",
+          "start": 197,
+          "end": 211,
+          "loc": {
+            "start": {
+              "line": 6,
+              "column": 7
+            },
+            "end": {
+              "line": 6,
+              "column": 21
+            }
+          },
+          "exported": {
+            "type": "Identifier",
+            "start": 197,
+            "end": 211,
+            "loc": {
+              "start": {
+                "line": 6,
+                "column": 7
+              },
+              "end": {
+                "line": 6,
                 "column": 21
               }
             },
@@ -260,15 +326,15 @@
       ],
       "source": {
         "type": "Literal",
-        "start": 162,
-        "end": 180,
+        "start": 217,
+        "end": 235,
         "loc": {
           "start": {
-            "line": 5,
+            "line": 6,
             "column": 27
           },
           "end": {
-            "line": 5,
+            "line": 6,
             "column": 45
           }
         },
@@ -279,44 +345,44 @@
     },
     {
       "type": "ExportNamedDeclaration",
-      "start": 182,
-      "end": 209,
+      "start": 237,
+      "end": 264,
       "loc": {
         "start": {
-          "line": 6,
+          "line": 7,
           "column": 0
         },
         "end": {
-          "line": 6,
+          "line": 7,
           "column": 27
         }
       },
       "specifiers": [
         {
           "type": "Identifier",
-          "start": 189,
-          "end": 194,
+          "start": 244,
+          "end": 249,
           "loc": {
             "start": {
-              "line": 6,
+              "line": 7,
               "column": 7
             },
             "end": {
-              "line": 6,
+              "line": 7,
               "column": 12
             }
           },
           "exported": {
             "type": "Identifier",
-            "start": 189,
-            "end": 194,
+            "start": 244,
+            "end": 249,
             "loc": {
               "start": {
-                "line": 6,
+                "line": 7,
                 "column": 7
               },
               "end": {
-                "line": 6,
+                "line": 7,
                 "column": 12
               }
             },
@@ -326,15 +392,15 @@
       ],
       "source": {
         "type": "Literal",
-        "start": 200,
-        "end": 209,
+        "start": 255,
+        "end": 264,
         "loc": {
           "start": {
-            "line": 6,
+            "line": 7,
             "column": 18
           },
           "end": {
-            "line": 6,
+            "line": 7,
             "column": 27
           }
         },
@@ -345,44 +411,44 @@
     },
     {
       "type": "ExportNamedDeclaration",
-      "start": 211,
-      "end": 262,
+      "start": 266,
+      "end": 317,
       "loc": {
         "start": {
-          "line": 7,
+          "line": 8,
           "column": 0
         },
         "end": {
-          "line": 7,
+          "line": 8,
           "column": 51
         }
       },
       "specifiers": [
         {
           "type": "Identifier",
-          "start": 218,
-          "end": 235,
+          "start": 273,
+          "end": 290,
           "loc": {
             "start": {
-              "line": 7,
+              "line": 8,
               "column": 7
             },
             "end": {
-              "line": 7,
+              "line": 8,
               "column": 24
             }
           },
           "exported": {
             "type": "Identifier",
-            "start": 218,
-            "end": 235,
+            "start": 273,
+            "end": 290,
             "loc": {
               "start": {
-                "line": 7,
+                "line": 8,
                 "column": 7
               },
               "end": {
-                "line": 7,
+                "line": 8,
                 "column": 24
               }
             },
@@ -392,15 +458,15 @@
       ],
       "source": {
         "type": "Literal",
-        "start": 241,
-        "end": 262,
+        "start": 296,
+        "end": 317,
         "loc": {
           "start": {
-            "line": 7,
+            "line": 8,
             "column": 30
           },
           "end": {
-            "line": 7,
+            "line": 8,
             "column": 51
           }
         },
@@ -411,44 +477,44 @@
     },
     {
       "type": "ExportNamedDeclaration",
-      "start": 264,
-      "end": 299,
+      "start": 319,
+      "end": 354,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 9,
           "column": 0
         },
         "end": {
-          "line": 8,
+          "line": 9,
           "column": 35
         }
       },
       "specifiers": [
         {
           "type": "Identifier",
-          "start": 271,
-          "end": 283,
+          "start": 326,
+          "end": 338,
           "loc": {
             "start": {
-              "line": 8,
+              "line": 9,
               "column": 7
             },
             "end": {
-              "line": 8,
+              "line": 9,
               "column": 19
             }
           },
           "exported": {
             "type": "Identifier",
-            "start": 271,
-            "end": 283,
+            "start": 326,
+            "end": 338,
             "loc": {
               "start": {
-                "line": 8,
+                "line": 9,
                 "column": 7
               },
               "end": {
-                "line": 8,
+                "line": 9,
                 "column": 19
               }
             },
@@ -458,15 +524,15 @@
       ],
       "source": {
         "type": "Literal",
-        "start": 289,
-        "end": 299,
+        "start": 344,
+        "end": 354,
         "loc": {
           "start": {
-            "line": 8,
+            "line": 9,
             "column": 25
           },
           "end": {
-            "line": 8,
+            "line": 9,
             "column": 35
           }
         },
@@ -477,44 +543,44 @@
     },
     {
       "type": "ExportNamedDeclaration",
-      "start": 301,
-      "end": 344,
+      "start": 356,
+      "end": 399,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 0
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 43
         }
       },
       "specifiers": [
         {
           "type": "Identifier",
-          "start": 308,
-          "end": 321,
+          "start": 363,
+          "end": 376,
           "loc": {
             "start": {
-              "line": 9,
+              "line": 10,
               "column": 7
             },
             "end": {
-              "line": 9,
+              "line": 10,
               "column": 20
             }
           },
           "exported": {
             "type": "Identifier",
-            "start": 308,
-            "end": 321,
+            "start": 363,
+            "end": 376,
             "loc": {
               "start": {
-                "line": 9,
+                "line": 10,
                 "column": 7
               },
               "end": {
-                "line": 9,
+                "line": 10,
                 "column": 20
               }
             },
@@ -524,368 +590,22 @@
       ],
       "source": {
         "type": "Literal",
-        "start": 327,
-        "end": 344,
+        "start": 382,
+        "end": 399,
         "loc": {
           "start": {
-            "line": 9,
+            "line": 10,
             "column": 26
           },
           "end": {
-            "line": 9,
+            "line": 10,
             "column": 43
           }
         },
         "value": "./crashReporter",
         "rawValue": "./crashReporter",
-        "raw": "'./crashReporter'",
-        "leadingComments": null,
-        "trailingComments": null
-      },
-      "trailingComments": [
-        {
-          "type": "Block",
-          "value": "* Default array of useful redux middleware ",
-          "start": 350,
-          "end": 397,
-          "loc": {
-            "start": {
-              "line": 12,
-              "column": 0
-            },
-            "end": {
-              "line": 12,
-              "column": 47
-            }
-          },
-          "range": [
-            350,
-            397
-          ]
-        }
-      ]
-    },
-    {
-      "type": "ExportDefaultDeclaration",
-      "start": 399,
-      "end": 643,
-      "loc": {
-        "start": {
-          "line": 13,
-          "column": 0
-        },
-        "end": {
-          "line": 23,
-          "column": 1
-        }
-      },
-      "declaration": {
-        "type": "FunctionDeclaration",
-        "start": 414,
-        "end": 643,
-        "loc": {
-          "start": {
-            "line": 13,
-            "column": 15
-          },
-          "end": {
-            "line": 23,
-            "column": 1
-          }
-        },
-        "id": {
-          "type": "Identifier",
-          "start": 423,
-          "end": 433,
-          "loc": {
-            "start": {
-              "line": 13,
-              "column": 24
-            },
-            "end": {
-              "line": 13,
-              "column": 34
-            }
-          },
-          "name": "middleware",
-          "leadingComments": null
-        },
-        "generator": false,
-        "expression": false,
-        "async": false,
-        "params": [],
-        "body": {
-          "type": "BlockStatement",
-          "start": 436,
-          "end": 643,
-          "loc": {
-            "start": {
-              "line": 13,
-              "column": 37
-            },
-            "end": {
-              "line": 23,
-              "column": 1
-            }
-          },
-          "body": [
-            {
-              "type": "VariableDeclaration",
-              "start": 441,
-              "end": 470,
-              "loc": {
-                "start": {
-                  "line": 14,
-                  "column": 2
-                },
-                "end": {
-                  "line": 14,
-                  "column": 31
-                }
-              },
-              "declarations": [
-                {
-                  "type": "VariableDeclarator",
-                  "start": 447,
-                  "end": 470,
-                  "loc": {
-                    "start": {
-                      "line": 14,
-                      "column": 8
-                    },
-                    "end": {
-                      "line": 14,
-                      "column": 31
-                    }
-                  },
-                  "id": {
-                    "type": "Identifier",
-                    "start": 447,
-                    "end": 453,
-                    "loc": {
-                      "start": {
-                        "line": 14,
-                        "column": 8
-                      },
-                      "end": {
-                        "line": 14,
-                        "column": 14
-                      }
-                    },
-                    "name": "logger"
-                  },
-                  "init": {
-                    "type": "CallExpression",
-                    "start": 456,
-                    "end": 470,
-                    "loc": {
-                      "start": {
-                        "line": 14,
-                        "column": 17
-                      },
-                      "end": {
-                        "line": 14,
-                        "column": 31
-                      }
-                    },
-                    "callee": {
-                      "type": "Identifier",
-                      "start": 456,
-                      "end": 468,
-                      "loc": {
-                        "start": {
-                          "line": 14,
-                          "column": 17
-                        },
-                        "end": {
-                          "line": 14,
-                          "column": 29
-                        }
-                      },
-                      "name": "createLogger"
-                    },
-                    "arguments": []
-                  }
-                }
-              ],
-              "kind": "const"
-            },
-            {
-              "type": "ReturnStatement",
-              "start": 474,
-              "end": 640,
-              "loc": {
-                "start": {
-                  "line": 15,
-                  "column": 2
-                },
-                "end": {
-                  "line": 22,
-                  "column": 11
-                }
-              },
-              "argument": {
-                "type": "ArrayExpression",
-                "start": 482,
-                "end": 640,
-                "loc": {
-                  "start": {
-                    "line": 15,
-                    "column": 10
-                  },
-                  "end": {
-                    "line": 22,
-                    "column": 11
-                  }
-                },
-                "elements": [
-                  {
-                    "type": "Identifier",
-                    "start": 484,
-                    "end": 498,
-                    "loc": {
-                      "start": {
-                        "line": 15,
-                        "column": 12
-                      },
-                      "end": {
-                        "line": 15,
-                        "column": 26
-                      }
-                    },
-                    "name": "idleMiddleware"
-                  },
-                  {
-                    "type": "Identifier",
-                    "start": 512,
-                    "end": 528,
-                    "loc": {
-                      "start": {
-                        "line": 16,
-                        "column": 12
-                      },
-                      "end": {
-                        "line": 16,
-                        "column": 28
-                      }
-                    },
-                    "name": "timeoutScheduler"
-                  },
-                  {
-                    "type": "Identifier",
-                    "start": 542,
-                    "end": 547,
-                    "loc": {
-                      "start": {
-                        "line": 17,
-                        "column": 12
-                      },
-                      "end": {
-                        "line": 17,
-                        "column": 17
-                      }
-                    },
-                    "name": "thunk"
-                  },
-                  {
-                    "type": "Identifier",
-                    "start": 563,
-                    "end": 580,
-                    "loc": {
-                      "start": {
-                        "line": 19,
-                        "column": 12
-                      },
-                      "end": {
-                        "line": 19,
-                        "column": 29
-                      }
-                    },
-                    "name": "readyStatePromise"
-                  },
-                  {
-                    "type": "Identifier",
-                    "start": 594,
-                    "end": 600,
-                    "loc": {
-                      "start": {
-                        "line": 20,
-                        "column": 12
-                      },
-                      "end": {
-                        "line": 20,
-                        "column": 18
-                      }
-                    },
-                    "name": "logger"
-                  },
-                  {
-                    "type": "Identifier",
-                    "start": 614,
-                    "end": 627,
-                    "loc": {
-                      "start": {
-                        "line": 21,
-                        "column": 12
-                      },
-                      "end": {
-                        "line": 21,
-                        "column": 25
-                      }
-                    },
-                    "name": "crashReporter"
-                  }
-                ]
-              }
-            }
-          ]
-        },
-        "leadingComments": [
-          {
-            "type": "Block",
-            "value": "* Default array of useful redux middleware ",
-            "start": 350,
-            "end": 397,
-            "loc": {
-              "start": {
-                "line": 12,
-                "column": 0
-              },
-              "end": {
-                "line": 12,
-                "column": 47
-              }
-            },
-            "range": [
-              350,
-              397
-            ]
-          }
-        ],
-        "trailingComments": []
-      },
-      "leadingComments": [
-        {
-          "type": "Block",
-          "value": "* Default array of useful redux middleware ",
-          "start": 350,
-          "end": 397,
-          "loc": {
-            "start": {
-              "line": 12,
-              "column": 0
-            },
-            "end": {
-              "line": 12,
-              "column": 47
-            }
-          },
-          "range": [
-            350,
-            397
-          ]
-        }
-      ]
+        "raw": "'./crashReporter'"
+      }
     }
   ]
 }

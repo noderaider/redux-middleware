@@ -37,6 +37,40 @@
     "kind": "file",
     "static": true,
     "variation": null,
+    "name": "lib/debuggerMiddleware.js",
+    "memberof": null,
+    "longname": "lib/debuggerMiddleware.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "\r\nconst debuggerMiddleware = store => next => action => {\r\n  /*\r\n  if(!action) {\r\n    console.warn('ACTION MUST EXIST')\r\n    debugger\r\n  }\r\n  if(!action.type) {\r\n    console.warn('ACTION TYPE MUST EXIST')\r\n    debugger\r\n  }\r\n  */\r\n  return next(action)\r\n}\r\n\r\nexport default debuggerMiddleware\r\n"
+  },
+  {
+    "__docId__": 3,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "debuggerMiddleware",
+    "memberof": "lib/debuggerMiddleware.js",
+    "longname": "lib/debuggerMiddleware.js~debuggerMiddleware",
+    "access": null,
+    "export": true,
+    "importPath": "redux-middleware/lib/debuggerMiddleware.js",
+    "importStyle": "debuggerMiddleware",
+    "description": null,
+    "lineNumber": 2,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 4,
+    "kind": "file",
+    "static": true,
+    "variation": null,
     "name": "lib/idleMiddleware.js",
     "memberof": null,
     "longname": "lib/idleMiddleware.js",
@@ -46,7 +80,7 @@
     "content": "/** When context has already been created, it can be shared to middleware component. */\r\nimport { createAction } from 'redux-actions'\r\n\r\nconst createIdleMiddleware = (context = {}) => {\r\n  //const createDispatcher = configureDispatcher(context)\r\n  const isIdleAction = ({ type, payload, meta }) => ['IDLEMONITOR_JS_ACTIVITY', 'IDLEMONITOR_JS_ACTIVE', 'IDLEMONITOR_JS_INACTIVE', 'IDLEMONITOR_JS_EXPIRED'].includes(type)\r\n  let cancel = () => {}\r\n\r\n  return store => next => action => {\r\n    if(!isIdleAction(action))\r\n      return next(action)\r\n\r\n    //const { idle } = action.meta\r\n    const { dispatch, getState } = store\r\n    switch(action.type) {\r\n      case 'IDLEMONITOR_JS_ACTIVE':\r\n        //cancel()\r\n        console.warn('SCHEDULING INACTIVE!')\r\n        cancel = dispatch(createAction('IDLEMONITOR_JS_INACTIVE', payload => payload, () => { meta: { delay: 6000 } }))\r\n        break\r\n      case 'IDLEMONITOR_JS_INACTIVE':\r\n        //cancel()\r\n        console.warn('SCHEDULING EXPIRED!')\r\n        cancel = dispatch(createAction('IDLEMONITOR_JS_EXPIRED', payload => payload, () => { meta: { delay: 6000 } }))\r\n        break\r\n      case 'IDLEMONITOR_JS_EXPIRED':\r\n        dispatch(createAction('FORGET_TOKENS')())\r\n    }\r\n\r\n    return next(action)\r\n  //return { next: 'EXPIRED', delay: 6000 }\r\n\r\n  //swal.close()\r\n  }\r\n}\r\n\r\n\r\nexport default createIdleMiddleware()\r\n"
   },
   {
-    "__docId__": 3,
+    "__docId__": 5,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -67,7 +101,7 @@
     }
   },
   {
-    "__docId__": 4,
+    "__docId__": 6,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -77,32 +111,10 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "import { applyMiddleware } from 'redux'\r\n\r\n//import metaRouter from './metaRouter'\r\nexport timeoutScheduler from './timeoutScheduler'\r\nexport idleMiddleware from './idleMiddleware'\r\nexport thunk from './thunk'\r\nexport readyStatePromise from './readyStatePromise'\r\nexport createLogger from './logger'\r\nexport crashReporter from './crashReporter'\r\n\r\n\r\n/** Default array of useful redux middleware */\r\nexport default function middleware() {\r\n  const logger = createLogger()\r\n  return  [ idleMiddleware\r\n          , timeoutScheduler\r\n          , thunk\r\n\r\n          , readyStatePromise\r\n          , logger\r\n          , crashReporter\r\n          ]\r\n}\r\n\r\n"
+    "content": "import { applyMiddleware } from 'redux'\r\n\r\n//import metaRouter from './metaRouter'\r\nexport debuggerMiddleware from './debuggerMiddleware'\r\nexport timeoutScheduler from './timeoutScheduler'\r\nexport idleMiddleware from './idleMiddleware'\r\nexport thunk from './thunk'\r\nexport readyStatePromise from './readyStatePromise'\r\nexport createLogger from './logger'\r\nexport crashReporter from './crashReporter'\r\n"
   },
   {
-    "__docId__": 5,
-    "kind": "function",
-    "static": true,
-    "variation": null,
-    "name": "middleware",
-    "memberof": "lib/index.js",
-    "longname": "lib/index.js~middleware",
-    "access": null,
-    "export": true,
-    "importPath": "redux-middleware",
-    "importStyle": "middleware",
-    "description": "Default array of useful redux middleware",
-    "lineNumber": 13,
-    "params": [],
-    "return": {
-      "types": [
-        "*"
-      ]
-    },
-    "generator": false
-  },
-  {
-    "__docId__": 6,
+    "__docId__": 7,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -115,7 +127,7 @@
     "content": "/** redux-logger with different defaults. */\r\n\r\nconst repeat = (str, times) => (new Array(times + 1)).join(str)\r\nconst pad = (num, maxLength) => repeat('0', maxLength - num.toString().length) + num\r\nconst formatTime = (time) => `@ ${pad(time.getHours(), 2)}:${pad(time.getMinutes(), 2)}:${pad(time.getSeconds(), 2)}.${pad(time.getMilliseconds(), 3)}`\r\n\r\n// Use the new performance api to get better precision if available\r\nconst timer = typeof performance !== 'undefined' && typeof performance.now === 'function' ? performance : Date\r\n\r\n\r\n/**\r\n * parse the level option of createLogger\r\n *\r\n * @property {string | function | object} level - console[level]\r\n * @property {object} action\r\n * @property {array} payload\r\n * @property {string} type\r\n */\r\n\r\nfunction getLogLevel(level, action, payload, type) {\r\n  switch (typeof level) {\r\n  case 'object':\r\n    return typeof level[type] === 'function' ? level[type](...payload) : level[type]\r\n  case 'function':\r\n    return level(action)\r\n  default:\r\n    return level\r\n  }\r\n}\r\n\r\n/**\r\n * Creates logger with followed options\r\n *\r\n * @namespace\r\n * @property {object} options - options for logger\r\n * @property {string | function | object} options.level - console[level]\r\n * @property {boolean} options.duration - print duration of each action?\r\n * @property {boolean} options.timestamp - print timestamp with each action?\r\n * @property {object} options.colors - custom colors\r\n * @property {object} options.logger - implementation of the `console` API\r\n * @property {boolean} options.logErrors - should errors in action execution be caught, logged, and re-thrown?\r\n * @property {boolean} options.collapsed - is group collapsed?\r\n * @property {boolean} options.predicate - condition which resolves logger behavior\r\n * @property {function} options.stateTransformer - transform state before print\r\n * @property {function} options.actionTransformer - transform action before print\r\n * @property {function} options.errorTransformer - transform error before print\r\n */\r\n\r\nexport default function createLogger(options = {}) {\r\n  const {\r\n    level = 'log',\r\n    logger = console,\r\n    logErrors = true,\r\n    collapsed = true,\r\n    predicate,\r\n    duration = false,\r\n    timestamp = true,\r\n    transformer, // deprecated\r\n    stateTransformer = state => state,\r\n    actionTransformer = actn => actn,\r\n    errorTransformer = error => error,\r\n    colors = {\r\n      title: () => '#000000',\r\n      prevState: () => '#9E9E9E',\r\n      action: () => '#03A9F4',\r\n      nextState: () => '#4CAF50',\r\n      error: () => '#F20404'\r\n    }\r\n  } = options\r\n\r\n  // exit if console undefined\r\n  if (typeof logger === 'undefined') {\r\n    return () => next => action => next(action)\r\n  }\r\n\r\n  if (transformer) {\r\n    console.error('Option \\'transformer\\' is deprecated, use stateTransformer instead')\r\n  }\r\n\r\n  const logBuffer = []\r\n  function printBuffer() {\r\n    logBuffer.forEach((logEntry, key) => {\r\n      const { started, startedTime, action, prevState, error } = logEntry\r\n      let { took, nextState } = logEntry\r\n      const nextEntry = logBuffer[key + 1]\r\n      if (nextEntry) {\r\n        nextState = nextEntry.prevState\r\n        took = nextEntry.started - started\r\n      }\r\n      // message\r\n      const formattedAction = actionTransformer(action)\r\n      const isCollapsed = (typeof collapsed === 'function') ? collapsed(() => nextState, action) : collapsed\r\n\r\n      const formattedTime = formatTime(startedTime)\r\n      const titleCSS = colors.title ? `color: ${colors.title(formattedAction)};` : null\r\n      const title = `action ${timestamp ? formattedTime : ''} ${formattedAction.type} ${duration ? `(in ${took.toFixed(2)} ms)` : ''}`\r\n\r\n      // render\r\n      try {\r\n        if (isCollapsed) {\r\n          if (colors.title) logger.groupCollapsed(`%c ${title}`, titleCSS)\r\n          else logger.groupCollapsed(title)\r\n        } else {\r\n          if (colors.title) logger.group(`%c ${title}`, titleCSS)\r\n          else logger.group(title)\r\n        }\r\n      } catch (e) {\r\n        logger.log(title)\r\n      }\r\n\r\n      const prevStateLevel = getLogLevel(level, formattedAction, [prevState], 'prevState')\r\n      const actionLevel = getLogLevel(level, formattedAction, [formattedAction], 'action')\r\n      const errorLevel = getLogLevel(level, formattedAction, [error, prevState], 'error')\r\n      const nextStateLevel = getLogLevel(level, formattedAction, [nextState], 'nextState')\r\n\r\n      if (prevStateLevel) {\r\n        if (colors.prevState) logger[prevStateLevel]('%c prev state', `color: ${colors.prevState(prevState)}; font-weight: bold`, prevState)\r\n        else logger[prevStateLevel]('prev state', prevState)\r\n      }\r\n\r\n      if (actionLevel) {\r\n        if (colors.action) logger[actionLevel]('%c action', `color: ${colors.action(formattedAction)}; font-weight: bold`, formattedAction)\r\n        else logger[actionLevel]('action', formattedAction)\r\n      }\r\n\r\n      if (error && errorLevel) {\r\n        if (colors.error) logger[errorLevel]('%c error', `color: ${colors.error(error, prevState)}; font-weight: bold`, error)\r\n        else logger[errorLevel]('error', error)\r\n      }\r\n\r\n      if (nextStateLevel) {\r\n        if (colors.nextState) logger[nextStateLevel]('%c next state', `color: ${colors.nextState(nextState)}; font-weight: bold`, nextState)\r\n        else logger[nextStateLevel]('next state', nextState)\r\n      }\r\n\r\n      try {\r\n        logger.groupEnd()\r\n      } catch (e) {\r\n        logger.log('—— log end ——')\r\n      }\r\n    })\r\n    logBuffer.length = 0\r\n  }\r\n\r\n  return ({ getState }) => (next) => (action) => {\r\n    // exit early if predicate function returns false\r\n    if (typeof predicate === 'function' && !predicate(getState, action))\r\n      return next(action)\r\n\r\n    const logEntry = {}\r\n    logBuffer.push(logEntry)\r\n\r\n    logEntry.started = timer.now()\r\n    logEntry.startedTime = new Date()\r\n    logEntry.prevState = stateTransformer(getState())\r\n    logEntry.action = action\r\n\r\n    let returnedValue\r\n    if (logErrors) {\r\n      try {\r\n        returnedValue = next(action)\r\n      } catch (e) {\r\n        logEntry.error = errorTransformer(e)\r\n      }\r\n    } else\r\n      returnedValue = next(action)\r\n\r\n    logEntry.took = timer.now() - logEntry.started\r\n    logEntry.nextState = stateTransformer(getState())\r\n\r\n    printBuffer()\r\n\r\n    if (logEntry.error) throw logEntry.error\r\n    return returnedValue\r\n  }\r\n}\r\n\r\n"
   },
   {
-    "__docId__": 7,
+    "__docId__": 8,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -135,7 +147,7 @@
     }
   },
   {
-    "__docId__": 8,
+    "__docId__": 9,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -156,7 +168,7 @@
     }
   },
   {
-    "__docId__": 9,
+    "__docId__": 10,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -177,7 +189,7 @@
     }
   },
   {
-    "__docId__": 10,
+    "__docId__": 11,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -198,7 +210,7 @@
     }
   },
   {
-    "__docId__": 11,
+    "__docId__": 12,
     "kind": "function",
     "static": true,
     "variation": null,
@@ -289,7 +301,7 @@
     "generator": false
   },
   {
-    "__docId__": 12,
+    "__docId__": 13,
     "kind": "function",
     "static": true,
     "variation": null,
@@ -451,7 +463,7 @@
     "generator": false
   },
   {
-    "__docId__": 13,
+    "__docId__": 14,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -464,7 +476,7 @@
     "content": "import timeoutScheduler from './timeoutScheduler'\r\n/*import identityHandler from './identityHandler'\r\nimport apiDispatcher from './apiDispatcher'\r\nimport routeHandler from './routeHandler'\r\n*/\r\nimport idleMiddleware from './idleMiddleware'\r\n//import errorHandler from './errorHandler'\r\n\r\n/**\r\n * Lets you dispatch special actions with a { meta } field.\r\n *\r\n * This middleware will chain through all middleware specified in metaMap in\r\n * order and return the result.\r\n */\r\nexport const createMetaRouter = (metaMap = new Map( [ [ 'delay', timeoutScheduler ]\r\n                                                  /*, [ 'identity', identityHandler ]\r\n                                                    , [ 'api', apiDispatcher ]\r\n                                                    , [ 'route', routeHandler ]*/\r\n                                                    , [ 'idle', idleMiddleware ]\r\n                                                  //, [ 'err', errorHandler ]\r\n                                                    ] )) => store => next => action => {\r\n  if(!action.meta)\r\n    return next(action)\r\n  console.warn('META TYPE DETECTED', action.meta)\r\n  const metaTypes = Object.keys(action.meta)\r\n  let result = metaTypes.filter(x => metaMap.has(x))\r\n                        .map(x => metaMap.get(x))\r\n                        .reduce((last, middleware) => middleware(store)(next)(last), action)\r\n  console.warn('META TYPE RESULT', result)\r\n  return next(result)\r\n}\r\n\r\nexport default createMetaRouter()\r\n"
   },
   {
-    "__docId__": 14,
+    "__docId__": 15,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -484,7 +496,7 @@
     }
   },
   {
-    "__docId__": 15,
+    "__docId__": 16,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -497,7 +509,7 @@
     "content": "/**\r\n * Schedules actions with { meta: { raf: true } } to be dispatched inside a rAF loop\r\n * frame.  Makes `dispatch` return a function to remove the action from the queue in\r\n * this case.\r\n */\r\nconst rafScheduler = store => next => {\r\n  let queuedActions = []\r\n  let frame = null\r\n\r\n  function loop() {\r\n    frame = null\r\n    try {\r\n      if (queuedActions.length) {\r\n        next(queuedActions.shift())\r\n      }\r\n    } finally {\r\n      maybeRaf()\r\n    }\r\n  }\r\n\r\n  function maybeRaf() {\r\n    if (queuedActions.length && !frame) {\r\n      frame = requestAnimationFrame(loop)\r\n    }\r\n  }\r\n\r\n  return action => {\r\n    if (!action.meta || !action.meta.raf) {\r\n      return next(action)\r\n    }\r\n\r\n    queuedActions.push(action)\r\n    maybeRaf()\r\n\r\n    return function cancel() {\r\n      queuedActions = queuedActions.filter(a => a !== action)\r\n    }\r\n  }\r\n}\r\n\r\nexport default rafScheduler\r\n"
   },
   {
-    "__docId__": 16,
+    "__docId__": 17,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -517,7 +529,7 @@
     }
   },
   {
-    "__docId__": 17,
+    "__docId__": 18,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -530,7 +542,7 @@
     "content": "/**\r\n * Lets you dispatch special actions with a { promise } field.\r\n *\r\n * This middleware will turn them into a single action at the beginning,\r\n * and a single success (or failure) action when the `promise` resolves.\r\n *\r\n * For convenience, `dispatch` will return the promise so the caller can wait.\r\n */\r\nconst readyStatePromise = store => next => action => {\r\n  if (!action.promise) {\r\n    return next(action)\r\n  }\r\n\r\n  function makeAction(ready, data) {\r\n    let newAction = Object.assign({}, action, { ready }, data)\r\n    delete newAction.promise\r\n    return newAction\r\n  }\r\n\r\n  next(makeAction(false))\r\n  return action.promise.then(\r\n    result => next(makeAction(true, { result })),\r\n    error => next(makeAction(true, { error }))\r\n  )\r\n}\r\n\r\nexport default readyStatePromise\r\n"
   },
   {
-    "__docId__": 18,
+    "__docId__": 19,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -550,7 +562,7 @@
     }
   },
   {
-    "__docId__": 19,
+    "__docId__": 20,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -563,7 +575,7 @@
     "content": "import { createAction } from 'redux-action'\r\n\r\nexport const SHOW_ALERT = 'SHOW_ALERT'\r\nexport const HIDE_ALERT = 'SHOW_ALERT'\r\n\r\n\r\nconst defaultProps =  { title: 'Still There?'\r\n                      , text: 'You will be logged out due to inactivity shortly.'\r\n                      , animation: 'slide-from-top'\r\n                      , showConfirmButton: false\r\n                      , html: true\r\n                      , type: 'warning'\r\n                      }\r\n\r\nexport const showAlert = createAction(SHOW_ALERT, (props = defaultProps) => props, ({ duration = 0 }) => ({ alert: { id: duration } }))\r\n\r\nconst sweetAlert = store => next => action => {\r\n  let swalTimeout = null\r\n  if(postState.actionName === 'INACTIVE') {\r\n    log.info('SWAL ACTIVE => SHOW')\r\n    swal( )\r\n  } else if(postState.actionName === 'EXPIRED') {\r\n    log.info('SWAL EXPIRED => HIDE IN 2 SECONDS')\r\n    dispatch(forgetTokens())\r\n    swalTimeout = setTimeout(() => swal.close(), 2000)\r\n  } else {\r\n    log.info('SWAL ELSE => HIDE NOW')\r\n    clearTimeout(swalTimeout)\r\n    swal.close()\r\n  }\r\n\r\n\r\n}\r\n\r\nexport default thunk\r\n"
   },
   {
-    "__docId__": 20,
+    "__docId__": 21,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -584,7 +596,7 @@
     }
   },
   {
-    "__docId__": 21,
+    "__docId__": 22,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -605,7 +617,7 @@
     }
   },
   {
-    "__docId__": 22,
+    "__docId__": 23,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -626,7 +638,7 @@
     }
   },
   {
-    "__docId__": 23,
+    "__docId__": 24,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -647,7 +659,7 @@
     }
   },
   {
-    "__docId__": 24,
+    "__docId__": 25,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -668,7 +680,7 @@
     }
   },
   {
-    "__docId__": 25,
+    "__docId__": 26,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -681,7 +693,7 @@
     "content": "/**\r\n * Lets you dispatch a function instead of an action.\r\n * This function will receive `dispatch` and `getState` as arguments.\r\n *\r\n * Useful for early exits (conditions over `getState()`), as well\r\n * as for async control flow (it can `dispatch()` something else).\r\n *\r\n * `dispatch` will return the return value of the dispatched function.\r\n */\r\nconst thunk = store => next => action =>\r\n  typeof action === 'function' ?\r\n    action(store.dispatch, store.getState) :\r\n    next(action)\r\n\r\nexport default thunk\r\n"
   },
   {
-    "__docId__": 26,
+    "__docId__": 27,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -701,7 +713,7 @@
     }
   },
   {
-    "__docId__": 27,
+    "__docId__": 28,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -714,7 +726,7 @@
     "content": "/**\r\n * Schedules actions with { meta: { delay: N } } to be delayed by N milliseconds.\r\n * Makes `dispatch` return a function to cancel the timeout in this case.\r\n */\r\nconst timeoutScheduler = store => next => action => {\r\n  if (!action.meta || !action.meta.delay)\r\n    return next(action)\r\n\r\n  let timeoutID = setTimeout(() => {\r\n    console.warn(`TIMEOUT SCHEDULER => type: ${action.type} delay: ${action.meta.delay} MS`)\r\n    next(action)\r\n  }, action.meta.delay)\r\n\r\n  return function cancel() {\r\n    console.warn(`TIMEOUT CANCELLED => ${timeoutID}`)\r\n    clearTimeout(timeoutID)\r\n  }\r\n}\r\n\r\nexport default timeoutScheduler\r\n"
   },
   {
-    "__docId__": 28,
+    "__docId__": 29,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -734,7 +746,7 @@
     }
   },
   {
-    "__docId__": 29,
+    "__docId__": 30,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -747,7 +759,7 @@
     "content": "/**\r\n * Lets you dispatch promises in addition to actions.\r\n * If the promise is resolved, its result will be dispatched as an action.\r\n * The promise is returned from `dispatch` so the caller may handle rejection.\r\n */\r\nconst vanillaPromise = store => next => action => {\r\n  if (typeof action.then !== 'function') {\r\n    return next(action)\r\n  }\r\n\r\n  return Promise.resolve(action).then(store.dispatch)\r\n}\r\n\r\nexport default vanillaPromise\r\n"
   },
   {
-    "__docId__": 30,
+    "__docId__": 31,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -767,7 +779,7 @@
     }
   },
   {
-    "__docId__": 32,
+    "__docId__": 33,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -780,7 +792,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 33,
+    "__docId__": 34,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -793,7 +805,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 34,
+    "__docId__": 35,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -806,7 +818,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 35,
+    "__docId__": 36,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -819,7 +831,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 36,
+    "__docId__": 37,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -832,7 +844,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 37,
+    "__docId__": 38,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -845,7 +857,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 38,
+    "__docId__": 39,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -858,7 +870,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 39,
+    "__docId__": 40,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -871,7 +883,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 40,
+    "__docId__": 41,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -884,7 +896,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 41,
+    "__docId__": 42,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -897,7 +909,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 42,
+    "__docId__": 43,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -910,7 +922,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 43,
+    "__docId__": 44,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -923,7 +935,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 44,
+    "__docId__": 45,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -936,7 +948,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 45,
+    "__docId__": 46,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -949,7 +961,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 46,
+    "__docId__": 47,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -962,7 +974,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 47,
+    "__docId__": 48,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -975,7 +987,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 48,
+    "__docId__": 49,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -988,7 +1000,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 49,
+    "__docId__": 50,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1001,7 +1013,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 50,
+    "__docId__": 51,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1014,7 +1026,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 51,
+    "__docId__": 52,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1027,7 +1039,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 52,
+    "__docId__": 53,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1040,7 +1052,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 53,
+    "__docId__": 54,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1053,7 +1065,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 54,
+    "__docId__": 55,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1066,7 +1078,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 55,
+    "__docId__": 56,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1079,7 +1091,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 56,
+    "__docId__": 57,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1092,7 +1104,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 57,
+    "__docId__": 58,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1105,7 +1117,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 58,
+    "__docId__": 59,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1118,7 +1130,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 59,
+    "__docId__": 60,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1131,7 +1143,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 60,
+    "__docId__": 61,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1144,7 +1156,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 61,
+    "__docId__": 62,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1157,7 +1169,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 62,
+    "__docId__": 63,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1170,7 +1182,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 63,
+    "__docId__": 64,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1183,7 +1195,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 64,
+    "__docId__": 65,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1196,7 +1208,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 65,
+    "__docId__": 66,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1209,7 +1221,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 66,
+    "__docId__": 67,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1222,7 +1234,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 67,
+    "__docId__": 68,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1235,7 +1247,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 68,
+    "__docId__": 69,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1248,7 +1260,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 69,
+    "__docId__": 70,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1261,7 +1273,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 70,
+    "__docId__": 71,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1274,7 +1286,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 71,
+    "__docId__": 72,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1287,7 +1299,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 72,
+    "__docId__": 73,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1300,7 +1312,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 73,
+    "__docId__": 74,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1313,7 +1325,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 74,
+    "__docId__": 75,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1326,7 +1338,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 75,
+    "__docId__": 76,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1339,7 +1351,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 76,
+    "__docId__": 77,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1352,7 +1364,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 77,
+    "__docId__": 78,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1365,7 +1377,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 78,
+    "__docId__": 79,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1378,7 +1390,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 80,
+    "__docId__": 81,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1391,7 +1403,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 81,
+    "__docId__": 82,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1404,7 +1416,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 82,
+    "__docId__": 83,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1417,7 +1429,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 83,
+    "__docId__": 84,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1430,7 +1442,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 84,
+    "__docId__": 85,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1443,7 +1455,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 85,
+    "__docId__": 86,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1456,7 +1468,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 86,
+    "__docId__": 87,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1469,7 +1481,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 87,
+    "__docId__": 88,
     "kind": "external",
     "static": true,
     "variation": null,
