@@ -30,10 +30,10 @@ window.esdocSearchIndex = [
     "variable"
   ],
   [
-    "redux-middleware~middleware",
-    "function/index.html#static-function-middleware",
-    "<span>middleware</span> <span class=\"search-result-import-path\">redux-middleware</span>",
-    "function"
+    "redux-middleware/lib/debuggermiddleware.js~debuggermiddleware",
+    "variable/index.html#static-variable-debuggerMiddleware",
+    "<span>debuggerMiddleware</span> <span class=\"search-result-import-path\">redux-middleware/lib/debuggerMiddleware.js</span>",
+    "variable"
   ],
   [
     "redux-middleware/lib/rafscheduler.js~rafscheduler",
@@ -405,6 +405,12 @@ window.esdocSearchIndex = [
     "lib/crashreporter.js",
     "file/lib/crashReporter.js.html",
     "lib/crashReporter.js",
+    "file"
+  ],
+  [
+    "lib/debuggermiddleware.js",
+    "file/lib/debuggerMiddleware.js.html",
+    "lib/debuggerMiddleware.js",
     "file"
   ],
   [
