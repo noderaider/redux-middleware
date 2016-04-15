@@ -1,6 +1,6 @@
 {
   "name": "redux-middleware",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "Set of logical Redux middleware.",
   "main": "lib/index.js",
   "files": [
