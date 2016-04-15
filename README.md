@@ -1,6 +1,10 @@
 # redux-middleware
 
-**All the common redux middleware**
+**common redux middleware**
+
+[![NPM](https://nodei.co/npm/redux-middleware.png?stars=true&downloadRank=true)](https://nodei.co/npm/redux-middleware/)
+
+[![NPM](https://nodei.co/npm-dl/redux-middleware.png?months=1)](https://nodei.co/npm/redux-middleware/)
 
 **Disclaimer: This library is in early development alongside redux-addons. It will be changing rapidly and is not ready for production use.**
 
