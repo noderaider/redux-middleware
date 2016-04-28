@@ -1,6 +1,6 @@
 {
   "name": "redux-middleware",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "Set of logical Redux middleware.",
   "main": "lib/index.js",
   "files": [
@@ -39,6 +39,7 @@
   ],
   "dependencies": {
     "chai": "^3.5.0",
+    "lodash": "^4.11.1",
     "redux": "^3.5.2",
     "redux-actions": "^0.9.1",
     "redux-blueprint": "*"
