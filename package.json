@@ -8,6 +8,7 @@
     "doc"
   ],
   "scripts": {
+    "link-dev": "npm link ../redux-blueprint",
     "prebuild": "rimraf build",
     "build": "babel src/lib -d lib",
     "watch": "npm run build -- --watch",
