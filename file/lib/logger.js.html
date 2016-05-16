@@ -51,6 +51,8 @@
 <div class="content" data-ice="content"><h1 data-ice="title">lib/logger.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/** redux-logger with different defaults. */
 
+const IS_BROWSER = typeof window === &apos;object&apos;
+
 const repeat = (str, times) =&gt; (new Array(times + 1)).join(str)
 const pad = (num, maxLength) =&gt; repeat(&apos;0&apos;, maxLength - num.toString().length) + num
 const formatTime = (time) =&gt; `@ ${pad(time.getHours(), 2)}:${pad(time.getMinutes(), 2)}:${pad(time.getSeconds(), 2)}.${pad(time.getMilliseconds(), 3)}`
@@ -97,36 +99,27 @@ function getLogLevel(level, action, payload, type) {
  * @property {function} options.errorTransformer - transform error before print
  */
 
-export default function createLogger(options = {}) {
-  const {
-    level = &apos;log&apos;,
-    logger = console,
-    logErrors = true,
-    collapsed = true,
-    predicate,
-    duration = false,
-    timestamp = true,
-    transformer, // deprecated
-    stateTransformer = state =&gt; state,
-    actionTransformer = actn =&gt; actn,
-    errorTransformer = error =&gt; error,
-    colors = {
-      title: () =&gt; &apos;#000000&apos;,
-      prevState: () =&gt; &apos;#9E9E9E&apos;,
-      action: () =&gt; &apos;#03A9F4&apos;,
-      nextState: () =&gt; &apos;#4CAF50&apos;,
-      error: () =&gt; &apos;#F20404&apos;
-    }
-  } = options
+export default function createLogger( { level = IS_BROWSER ? &apos;info&apos; : &apos;trace&apos;
+                                      , logger = console
+                                      , logErrors = true
+                                      , collapsed = true
+                                      , predicate
+                                      , duration = false
+                                      , timestamp = true
+                                      , stateTransformer = state =&gt; state
+                                      , actionTransformer = actn =&gt; actn
+                                      , errorTransformer = error =&gt; error
+                                      , colors =  { title: () =&gt; &apos;#000000&apos;
+                                                  , prevState: () =&gt; &apos;#9E9E9E&apos;
+                                                  , action: () =&gt; &apos;#03A9F4&apos;
+                                                  , nextState: () =&gt; &apos;#4CAF50&apos;
+                                                  , error: () =&gt; &apos;#F20404&apos;
+                                                  }
+                                      } = {}) {
 
   // exit if console undefined
-  if (typeof logger === &apos;undefined&apos;) {
+  if (typeof logger === &apos;undefined&apos;)
     return () =&gt; next =&gt; action =&gt; next(action)
-  }
-
-  if (transformer) {
-    console.error(&apos;Option \&apos;transformer\&apos; is deprecated, use stateTransformer instead&apos;)
-  }
 
   const logBuffer = []
   function printBuffer() {
@@ -146,6 +139,7 @@ export default function createLogger(options = {}) {
       const titleCSS = colors.title ? `color: ${colors.title(formattedAction)};` : null
       const title = `action ${timestamp ? formattedTime : &apos;&apos;} ${formattedAction.type} ${duration ? `(in ${took.toFixed(2)} ms)` : &apos;&apos;}`
 
+
       // render
       try {
         if (isCollapsed) {
@@ -156,7 +150,7 @@ export default function createLogger(options = {}) {
           else logger.group(title)
         }
       } catch (e) {
-        logger.log(title)
+        logger[level](title)
       }
 
       const prevStateLevel = getLogLevel(level, formattedAction, [prevState], &apos;prevState&apos;)
@@ -187,7 +181,7 @@ export default function createLogger(options = {}) {
       try {
         logger.groupEnd()
       } catch (e) {
-        logger.log(&apos;&#x2014;&#x2014; log end &#x2014;&#x2014;&apos;)
+        logger[level](&apos;&#x2014;&#x2014; log end &#x2014;&#x2014;&apos;)
       }
     })
     logBuffer.length = 0
