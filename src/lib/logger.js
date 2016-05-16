@@ -1,5 +1,7 @@
 /** redux-logger with different defaults. */
 
+const IS_BROWSER = typeof window === 'object'
+
 const repeat = (str, times) => (new Array(times + 1)).join(str)
 const pad = (num, maxLength) => repeat('0', maxLength - num.toString().length) + num
 const formatTime = (time) => `@ ${pad(time.getHours(), 2)}:${pad(time.getMinutes(), 2)}:${pad(time.getSeconds(), 2)}.${pad(time.getMilliseconds(), 3)}`
@@ -46,36 +48,27 @@ function getLogLevel(level, action, payload, type) {
  * @property {function} options.errorTransformer - transform error before print
  */
 
-export default function createLogger(options = {}) {
-  const {
-    level = 'log',
-    logger = console,
-    logErrors = true,
-    collapsed = true,
-    predicate,
-    duration = false,
-    timestamp = true,
-    transformer, // deprecated
-    stateTransformer = state => state,
-    actionTransformer = actn => actn,
-    errorTransformer = error => error,
-    colors = {
-      title: () => '#000000',
-      prevState: () => '#9E9E9E',
-      action: () => '#03A9F4',
-      nextState: () => '#4CAF50',
-      error: () => '#F20404'
-    }
-  } = options
+export default function createLogger( { level = IS_BROWSER ? 'info' : 'trace'
+                                      , logger = console
+                                      , logErrors = true
+                                      , collapsed = true
+                                      , predicate
+                                      , duration = false
+                                      , timestamp = true
+                                      , stateTransformer = state => state
+                                      , actionTransformer = actn => actn
+                                      , errorTransformer = error => error
+                                      , colors =  { title: () => '#000000'
+                                                  , prevState: () => '#9E9E9E'
+                                                  , action: () => '#03A9F4'
+                                                  , nextState: () => '#4CAF50'
+                                                  , error: () => '#F20404'
+                                                  }
+                                      } = {}) {
 
   // exit if console undefined
-  if (typeof logger === 'undefined') {
+  if (typeof logger === 'undefined')
     return () => next => action => next(action)
-  }
-
-  if (transformer) {
-    console.error('Option \'transformer\' is deprecated, use stateTransformer instead')
-  }
 
   const logBuffer = []
   function printBuffer() {
@@ -95,6 +88,7 @@ export default function createLogger(options = {}) {
       const titleCSS = colors.title ? `color: ${colors.title(formattedAction)};` : null
       const title = `action ${timestamp ? formattedTime : ''} ${formattedAction.type} ${duration ? `(in ${took.toFixed(2)} ms)` : ''}`
 
+
       // render
       try {
         if (isCollapsed) {
@@ -105,7 +99,7 @@ export default function createLogger(options = {}) {
           else logger.group(title)
         }
       } catch (e) {
-        logger.log(title)
+        logger[level](title)
       }
 
       const prevStateLevel = getLogLevel(level, formattedAction, [prevState], 'prevState')
@@ -136,7 +130,7 @@ export default function createLogger(options = {}) {
       try {
         logger.groupEnd()
       } catch (e) {
-        logger.log('—— log end ——')
+        logger[level]('—— log end ——')
       }
     })
     logBuffer.length = 0
